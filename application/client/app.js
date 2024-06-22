@@ -16,7 +16,7 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_init").show();
        });
    }
-   $scope.invokeAB = function(){
+   $scope.invokeAB = () => {
        $("#success_invoke").hide();
        appFactory.invokeAB($scope.invoke, function(data){
            if(data == "")
@@ -31,16 +31,16 @@ app.controller('AppCtrl', function($scope, appFactory){
            $("#success_qurey").show();
        });
    }
-   $scope.queryAdmin = function(){
+   $scope.queryAdmin = () => {
        $("#success_qurey_admin").hide();
        appFactory.queryAB("admin", function(data){
            $scope.query_admin = data;
            $("#success_qurey_admin").show();
        });
    }
-   $scope.deleteAB = function(){
+   $scope.deleteAB = () => {
         $("#success_delete").hide();
-        appFactory.deleteAB($scope.deleteid, function(data){
+        appFactory.deleteAB($scope.deleteid, (data) => {
             if(data == "")
             $scope.delete_ab = "success";
             $("#success_delete").show();
@@ -52,11 +52,11 @@ app.factory('appFactory', function($http){
     var factory = {};
  
     factory.initAB = function(data, callback){
-        $http.get('/init?user='+data.a+'&userVal='+data.aval+'&b='+data.b+'&bval='+data.bval+'&c='+data.c+'&cval='+data.cval).success(function(output){
+        $http.get('/init?user='+data.a+'&userVal='+data.aval).success(function(output){
             callback(output)
         });
     }
-    factory.invokeAB = function(data, callback){
+    factory.invokeAB = (data, callback) => {
         $http.get('/invoke?sender='+data.sender+'&receiver='+data.receiver+'&amount='+data.amount).success(function(output){
             callback(output)
         });
@@ -66,7 +66,7 @@ app.factory('appFactory', function($http){
             callback(output)
         });
     }
-    factory.deleteAB = function(name, callback){
+    factory.deleteAB = (name, callback) => {
         $http.get('/delete?name='+name).success(function(output){
             callback(output)
         });
