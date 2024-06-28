@@ -33,95 +33,29 @@ const ABstore = class {
     }
   }
 
-  async init(stub, args) {
-    if (args.length != 2) {
-      return shim.error('Incorrect number of arguments. Expecting 2');
-    }
-
-    let user = args[0];
-    let userVal = args[1];
-
-    if (isNaN(parseInt(userVal))) {
-      return shim.error('Expecting integer value for asset holding');
-    }
-
-    await stub.putState(user, Buffer.from(userVal));
-  }
-
-  async invoke(stub, args) {
-    if (args.length != 3) {
-      throw new Error('Incorrect number of arguments. Expecting 3');
-    }
-
-    let A = args[0];
-    let B = args[1];
-    const admin = "admin";
-
-    if (!A || !B) {
-      throw new Error('Asset holding must not be empty');
-    }
-
-    let Avalbytes = await stub.getState(A);
-    if (!Avalbytes) {
-      throw new Error('Failed to get state of asset holder A');
-    }
-    let Aval = parseInt(Avalbytes.toString());
-
-    let Bvalbytes = await stub.getState(B);
-    if (!Bvalbytes) {
-      throw new Error('Failed to get state of asset holder B');
-    }
-    let Bval = parseInt(Bvalbytes.toString());
-
-    let AdminValbytes = await stub.getState(admin);
-    if (!AdminValbytes) {
-      throw new Error('Failed to get state of asset Admin');
-    }
-    let AdminVal = parseInt(AdminValbytes.toString());
-
-    let amount = parseInt(args[2]);
-    if (isNaN(amount)) {
-      throw new Error('Expecting integer value for amount to be transferred');
-    }
-
-    Aval -= amount;
-    Bval += amount - (amount / 10);
-    AdminVal += amount / 10;
-    console.info(util.format('Aval = %d, Bval = %d, AdminVal = %d\n', Aval, Bval, AdminVal));
-
-    await stub.putState(A, Buffer.from(Aval.toString()));
-    await stub.putState(B, Buffer.from(Bval.toString()));
-    await stub.putState(admin, Buffer.from(AdminVal.toString()));
-  }
-
-  async delete(stub, args) {
-    if (args.length != 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1');
-    }
-
-    let A = args[0];
-    await stub.deleteState(A);
-  }
-
   async query(stub, args) {
     if (args.length != 1) {
-      throw new Error('Incorrect number of arguments. Expecting name of the person to query');
+      return shim.error('Incorrect number of arguments. Expecting 1');
     }
 
-    let jsonResp = {};
-    let A = args[0];
+    let userId = args[0];
 
-    let Avalbytes = await stub.getState(A);
-    if (!Avalbytes) {
-      jsonResp.error = 'Failed to get state for ' + A;
-      throw new Error(JSON.stringify(jsonResp));
+    let userBytes = await stub.getState(userId);
+    if (!userBytes || userBytes.length === 0) {
+      return shim.error('User not found');
     }
 
-    jsonResp.name = A;
-    jsonResp.amount = Avalbytes.toString();
+    let user = JSON.parse(userBytes.toString());
+
+    let jsonResp = {
+      userId: user.userId,
+      username: user.username,
+      balance: user.balance
+    };
+
     console.info('Query Response:');
     console.info(jsonResp);
-    return Avalbytes;
+    return Buffer.from(JSON.stringify(jsonResp));
   }
 
   async registerUser(stub, args) {
@@ -141,7 +75,8 @@ const ABstore = class {
     let user = {
       username: username,
       userId: userId,
-      password: password
+      password: password,
+      balance: 1000  // Initial points
     };
 
     await stub.putState(userId, Buffer.from(JSON.stringify(user)));
@@ -159,7 +94,7 @@ const ABstore = class {
     if (!userBytes || userBytes.length === 0) {
       return shim.error('User not found');
     }
-    
+
     let user = JSON.parse(userBytes.toString());
     if (user.password !== password) {
       return shim.error('Invalid password');
@@ -188,6 +123,5 @@ const ABstore = class {
     return Buffer.from('Points recharged successfully');
   }
 };
-
 
 shim.start(new ABstore());
