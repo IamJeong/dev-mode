@@ -46,6 +46,25 @@ app.controller('AppCtrl', function($scope, appFactory){
             $("#success_delete").show();
         });
     }
+    $scope.registerUser = function() {
+        $("#success_register").hide();
+        appFactory.registerUser($scope.register, function(data) {
+            $scope.register_status = "Registration " + data.status;
+            $("#success_register").show();
+        });
+    }
+
+    $scope.loginUser = function() {
+        $("#success_login").hide();
+        appFactory.loginUser($scope.login, function(data) {
+            if (data.status === 'success') {
+                window.location.href = '/mainpage';
+            } else {
+                $scope.login_status = "Login failed";
+                $("#success_login").show();
+            }
+        });
+    }
 });
 app.factory('appFactory', function($http){
       
@@ -69,6 +88,17 @@ app.factory('appFactory', function($http){
     factory.deleteAB = (name, callback) => {
         $http.get('/delete?name='+name).success(function(output){
             callback(output)
+        });
+    }
+    factory.registerUser = function(data, callback) {
+        $http.post('/register', data).success(function(output) {
+            callback(output);
+        });
+    }
+
+    factory.loginUser = function(data, callback) {
+        $http.post('/login', data).success(function(output) {
+            callback(output);
         });
     }
     return factory;

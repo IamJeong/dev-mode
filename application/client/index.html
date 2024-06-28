@@ -37,6 +37,28 @@
       <div id="left_header">Hyperledger Fabric AB Store Application</div>
     </header>
     <div id="body">
+              <!-- Register -->
+        <div class="form-group">
+            <label>Register</label>
+            <h5 style="color:green;margin-bottom:2%" id="success_register">{{register_status}}</h5>
+            <br>
+            Username: <input class="form-control" type="text" ng-model="register.username">
+            User ID: <input class="form-control" type="text" ng-model="register.userId">
+            Password: <input class="form-control" type="password" ng-model="register.password">
+            Confirm Password: <input class="form-control" type="password" ng-model="register.confirmPassword">
+            <input id="registerUser" type="submit" value="Register" class="btn btn-primary" ng-click="registerUser()">
+        </div>
+        <hr>
+        <!-- Login -->
+        <div class="form-group">
+            <label>Login</label>
+            <h5 style="color:green;margin-bottom:2%" id="success_login">{{login_status}}</h5>
+            <br>
+            User ID: <input class="form-control" type="text" ng-model="login.userId">
+            Password: <input class="form-control" type="password" ng-model="login.password">
+            <input id="loginUser" type="submit" value="Login" class="btn btn-primary" ng-click="loginUser()">
+        </div>
+        <hr>
       <div class="form-group">
         <label>Init</label>
         <h5 style="color:green;margin-bottom:2%" id="success_init">{{init_ab}}</h5>
