@@ -49,7 +49,7 @@ app.controller('AppCtrl', function($scope, appFactory){
     $scope.registerUser = function() {
         $("#success_register").hide();
         appFactory.registerUser($scope.register, function(data) {
-            $scope.register_status = "Registration " + data.status;
+            $scope.register_status = "Registration " + data.message;
             $("#success_register").show();
         });
     }
@@ -58,11 +58,19 @@ app.controller('AppCtrl', function($scope, appFactory){
         $("#success_login").hide();
         appFactory.loginUser($scope.login, function(data) {
             if (data.status === 'success') {
-                window.location.href = '/mainpage';
+                window.location.href = '/mainpage.html';
             } else {
                 $scope.login_status = "Login failed";
                 $("#success_login").show();
             }
+        });
+    }
+
+    $scope.rechargePoints = function() {
+        $("#success_recharge").hide();
+        appFactory.rechargePoints($scope.recharge, function(data) {
+            $scope.recharge_status = data.message;
+            $("#success_recharge").show();
         });
     }
 });
@@ -99,6 +107,12 @@ app.factory('appFactory', function($http){
     factory.loginUser = function(data, callback) {
         $http.post('/login', data).success(function(output) {
             callback(output);
+        });
+    }
+    
+    factory.rechargePoints = function(data, callback) {
+        $http.post('/recharge', data).then(function(response) {
+            callback(response.data);
         });
     }
     return factory;

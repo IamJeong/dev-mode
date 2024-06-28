@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Main Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+</head>
+<body ng-app="application" ng-controller="AppCtrl">
+    <div class="container">
+        <h2>Welcome to the Main Page</h2>
+        <hr>
+        <div class="form-group">
+            <label>Recharge Points</label>
+            <h5 style="color:green;margin-bottom:2%" id="success_recharge">{{recharge_status}}</h5>
+            <input class="form-control" type="text" placeholder="Amount" ng-model="recharge.amount">
+            <input type="submit" value="Recharge" class="btn btn-primary" ng-click="rechargePoints()">
+        </div>
+        <hr>
+        <div class="form-group">
+            <label>Purchase Item</label>
+            <h5 style="color:green;margin-bottom:2%" id="success_purchase">{{purchase_status}}</h5>
+            <input class="form-control" type="text" placeholder="Item" ng-model="purchase.item">
+            <input class="form-control" type="text" placeholder="Price" ng-model="purchase.price">
+            <input type="submit" value="Purchase" class="btn btn-primary" ng-click="purchaseItem()">
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="app.js"> </script>
+</html>

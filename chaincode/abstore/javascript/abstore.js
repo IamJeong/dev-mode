@@ -159,7 +159,7 @@ const ABstore = class {
     if (!userBytes || userBytes.length === 0) {
       return shim.error('User not found');
     }
-
+    
     let user = JSON.parse(userBytes.toString());
     if (user.password !== password) {
       return shim.error('Invalid password');
@@ -167,6 +167,27 @@ const ABstore = class {
 
     return Buffer.from('Login successful');
   }
+
+  async rechargePoints(stub, args) {
+    if (args.length != 2) {
+      return shim.error('Incorrect number of arguments. Expecting 2');
+    }
+
+    let userId = args[0];
+    let amount = parseInt(args[1]);
+
+    let userBytes = await stub.getState(userId);
+    if (!userBytes || userBytes.length === 0) {
+      return shim.error('User not found');
+    }
+
+    let user = JSON.parse(userBytes.toString());
+    user.balance += amount;
+
+    await stub.putState(userId, Buffer.from(JSON.stringify(user)));
+    return Buffer.from('Points recharged successfully');
+  }
 };
+
 
 shim.start(new ABstore());
