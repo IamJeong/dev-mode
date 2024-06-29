@@ -19,6 +19,14 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+function checkAdmin(req, res, next) {
+    if (req.session && req.session.user === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ status: 'error', message: 'Forbidden: Admins only' });
+    }
+}
+
 app.post('/register', async function(req, res) {
     let { username, userId, password, confirmPassword } = req.body;
     if (password !== confirmPassword) {
@@ -26,7 +34,7 @@ app.post('/register', async function(req, res) {
     }
     let args = [username, userId, password, confirmPassword];
     sdk.send(false, 'registerUser', args, res, (result) => {
-        res.json({ status: 'success', message: 'Registration successful', result });
+        res.json({ status: 'success', message: result });
     });
 });
 
@@ -36,9 +44,9 @@ app.post('/login', async function(req, res) {
     sdk.send(true, 'loginUser', args, res, (result) => {
         if (result === 'Login successful') {
             req.session.user = userId;
-            res.json({ status: 'success' });
+            res.json({ status: 'success', isAdmin: userId === 'admin' });
         } else {
-            res.json({ status: 'error', message: 'Invalid login' });
+            res.json({ status: 'error', message: result });
         }
     });
 });
@@ -55,19 +63,28 @@ app.get('/mainpage', checkSession, (req, res) => {
 });
 
 
-app.get('/recharge', checkSession, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/recharge.html'));
-});
-app.get('/recharge.html', checkSession, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/recharge.html'));
+// app.get('/recharge', checkSession, (req, res) => {
+//     res.sendFile(path.join(__dirname, '../client/recharge.html'));
+// });
+// app.get('/recharge.html', checkSession, (req, res) => {
+//     res.sendFile(path.join(__dirname, '../client/recharge.html'));
+// });
+
+app.post('/send', checkSession, async function(req, res) {
+    let { receiverId, amount } = req.body;
+    let senderId = req.session.user;
+    let args = [senderId, receiverId, amount];
+    sdk.send(false, 'sendPoints', args, res, (result) => {
+        res.json({ status: 'success', message: result });
+    });
 });
 
-app.post('/recharge', checkSession, async function(req, res) {
-    let { amount } = req.body;
+app.post('/playGame', checkSession, async function(req, res) {
+    let { betAmount, choice } = req.body;
     let userId = req.session.user;
-    let args = [userId, amount];
-    sdk.send(false, 'rechargePoints', args, res, (result) => {
-        res.json({ status: 'success', message: 'Points recharged successfully', result });
+    let args = [userId, betAmount, choice];
+    sdk.send(false, 'playGame', args, res, (result) => {
+        res.json({ status: 'success', message: result });
     });
 });
 
@@ -76,6 +93,30 @@ app.get('/query', checkSession, function(req, res) {
     let args = [userId];
     sdk.send(true, 'query', args, res, (result) => {
         res.json({ status: 'success', data: JSON.parse(result) });
+    });
+});
+
+app.get('/logout', function(req, res) {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ status: 'error', message: 'Failed to logout' });
+        }
+        res.json({ status: 'success', message: 'Logged out successfully' });
+    });
+});
+
+app.get('/admin', checkSession, checkAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/admin.html'));
+});
+app.get('/admin.html', checkSession, checkAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/admin.html'));
+});
+
+app.post('/admin/recharge', checkSession, checkAdmin, async function(req, res) {
+    let { userId, amount } = req.body;
+    let args = [userId, amount];
+    sdk.send(false, 'rechargePoints', args, res, (result) => {
+        res.json({ status: 'success', message: result });
     });
 });
 

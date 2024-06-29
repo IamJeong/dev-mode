@@ -1,57 +1,37 @@
 <!DOCTYPE html>
 <html>
- <head>
-   <title>Hyperledger Fabric AB Store</title>
-
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-
-   <style type="text/css">
-     header{
-       background-color: lightgray;
-       font-size:20px;
-       padding:20px;
-     }
-     header, .form-group{
-       margin-bottom: 3%;
-     }
-     .form-group{
-       width:50%;
-     }
-     #body{
-       margin-left:3%;
-       margin-right:3%;
-     }
-     .form-control{
-       margin: 8px;
-     }
-     label{
-       font-size:20px;
-     }
-   </style>
- </head>
- <body ng-app="application" ng-controller="AppCtrl">
-    <header>
-      <div id="left_header">Hyperledger Fabric AB Store Application</div>
-    </header>
-    <div id="body">
-              <!-- Register -->
-        <div class="form-group">
-            <label>Register</label>
-            <h5 style="color:green;margin-bottom:2%" id="success_register">{{register_status}}</h5>
-            <br>
-            Username: <input class="form-control" type="text" ng-model="register.username">
-            User ID: <input class="form-control" type="text" ng-model="register.userId">
-            Password: <input class="form-control" type="password" ng-model="register.password">
-            Confirm Password: <input class="form-control" type="password" ng-model="register.confirmPassword">
-            <input id="registerUser" type="submit" value="Register" class="btn btn-primary" ng-click="registerUser()">
-        </div>
-        <hr>
-        <a href = "./login.html">Login</a>
+<head>
+    <title>회원가입 페이지</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+</head>
+<body ng-app="application" ng-controller="AppCtrl">
+    <div class="container">
+        <h2>회원가입</h2>
+        <form ng-submit="registerUser()">
+            <div class="input-group">
+                <label for="username">사용자 이름</label>
+                <input type="text" id="username" ng-model="register.username" required>
+            </div>
+            <div class="input-group">
+                <label for="userId">사용자 ID</label>
+                <input type="text" id="userId" ng-model="register.userId" required>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" ng-model="register.password" required>
+            </div>
+            <div class="input-group">
+                <label for="confirmPassword">비밀번호 확인</label>
+                <input type="password" id="confirmPassword" ng-model="register.confirmPassword" required>
+            </div>
+            <button type="submit">회원가입</button>
+            <h5 style="color:green;margin-top:1rem;text-align:center;" id="success_register">{{register_status}}</h5>
+        </form>
+        <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
     </div>
-  </body>
-  <script type="text/javascript" src="app.js"> </script>
- </html>
- 
+</body>
+<script type="text/javascript" src="app.js"></script>
+</html>

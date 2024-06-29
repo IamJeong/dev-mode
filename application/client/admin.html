@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>메인 페이지</title>
+    <title>관리자 페이지</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -33,49 +33,30 @@
         label {
             font-weight: bold;
         }
-        #success_transaction, #success_game {
+        #success_recharge {
             text-align: center;
         }
     </style>
 </head>
-<body ng-app="application" ng-controller="AppCtrl">
+<body ng-app="application" ng-controller="AdminCtrl">
     <div class="container">
-        <h2>메인 페이지</h2>
+        <h2>관리자 페이지</h2>
         <button class="btn btn-danger" ng-click="logout()">로그아웃</button>
         <hr>
         <div>
-            <h3>사용자 정보</h3>
-            <p>사용자 ID: {{user_info.userId}}</p>
-            <p>사용자 이름: {{user_info.username}}</p>
-            <p>잔액: {{user_info.balance}}</p>
-        </div>
-        <!-- <div>
-            <a href="/recharge" class="btn btn-primary">포인트 충전</a>
-        </div> -->
-        <a href = "./send.html">Send</a>
-        <div>
-            <h3>홀짝 게임</h3>
-            <form ng-submit="playGame()">
+            <h3>포인트 충전</h3>
+            <form ng-submit="rechargePoints()">
                 <div class="form-group">
-                    <label for="betAmount">배팅 금액</label>
-                    <input type="number" class="form-control" id="betAmount" ng-model="game.betAmount" required>
+                    <label for="userId">사용자 ID</label>
+                    <input type="text" class="form-control" id="userId" ng-model="recharge.userId" required>
                 </div>
                 <div class="form-group">
-                    <label>홀짝 선택</label>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" ng-model="game.choice" value="홀" checked> 홀
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" ng-model="game.choice" value="짝"> 짝
-                        </label>
-                    </div>
+                    <label for="amount">충전 금액</label>
+                    <input type="number" class="form-control" id="amount" ng-model="recharge.amount" required>
                 </div>
-                <button type="submit" class="btn btn-primary">게임하기</button>
+                <button type="submit" class="btn btn-primary">충전하기</button>
             </form>
-            <h5 style="color:green;margin-bottom:2%" id="success_game">{{game_status}}</h5>
+            <h5 style="color:green;margin-bottom:2%" id="success_recharge">{{recharge_status}}</h5>
         </div>
     </div>
 </body>
