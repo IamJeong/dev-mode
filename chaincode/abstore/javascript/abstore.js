@@ -89,7 +89,7 @@ const ABstore = class {
       password: password,
       balance: 5000  // Initial points
     };
-
+    
     await stub.putState(userId, Buffer.from(JSON.stringify(user)));
     return Buffer.from('Registration successful');
   }
@@ -163,7 +163,7 @@ const ABstore = class {
     let sender = JSON.parse(senderBytes.toString());
     let receiver = JSON.parse(receiverBytes.toString());
 
-    if (sender.balance < amount) {
+    if (sender.balance <= amount) {
       return shim.error('잔액이 부족합니다.');
     }
 
@@ -187,19 +187,21 @@ const ABstore = class {
 
     let userBytes = await stub.getState(userId);
     if (!userBytes || userBytes.length === 0) {
-      return shim.error('사용자를 찾을 수 없습니다.');
+      return shim.error('User not found');
     }
 
     let user = JSON.parse(userBytes.toString());
 
-    if (user.balance < betAmount) {
-      return shim.error('잔액이 부족합니다.');
+    if (user.balance <= betAmount) {
+      return shim.error('Insufficient balance');
     }
 
     const randomValue = Math.floor(Math.random() * 100); 
     const result = randomValue % 2 === 0 ? '짝' : '홀';
     if (result === choice) {
-      user.balance += betAmount - (betAmount / 10);
+      let fee = betAmount / 10; 
+      user.balance += betAmount - fee;
+      
     } else {
       user.balance -= betAmount;
     }

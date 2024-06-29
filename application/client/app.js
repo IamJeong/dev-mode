@@ -49,7 +49,7 @@ app.controller('AppCtrl', function($scope, appFactory) {
             $scope.queryAB(); // 송금 후 잔액 조회
         });
     }
-
+    
     $scope.playGame = function() {
         $("#success_game").hide();
         appFactory.playGame($scope.game, function(data) {
