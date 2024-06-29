@@ -115,6 +115,26 @@ const ABstore = class {
     return Buffer.from('Login successful');
   }
 
+  async userRechargePoints(stub, args) {
+    if (args.length != 2) {
+      return shim.error('Incorrect number of arguments. Expecting 2');
+    }
+    
+    let userId = args[0];
+    let amount = parseInt(args[1]);
+
+    let userBytes = await stub.getState(userId);
+    if (!userBytes || userBytes.length === 0) {
+      return shim.error('사용자를 찾을 수 없습니다.');
+    }
+
+    let user = JSON.parse(userBytes.toString());
+    user.balance += amount + (amount / 10);
+
+    await stub.putState(userId, Buffer.from(JSON.stringify(user)));
+    return Buffer.from('성공');
+  }
+
   async rechargePoints(stub, args) {
     if (args.length != 2) {
       return shim.error('Incorrect number of arguments. Expecting 2');
@@ -187,27 +207,37 @@ const ABstore = class {
 
     let userBytes = await stub.getState(userId);
     if (!userBytes || userBytes.length === 0) {
-      return shim.error('User not found');
+      return shim.error('사용자를 찾을 수 없습니다.');
     }
 
     let user = JSON.parse(userBytes.toString());
 
     if (user.balance <= betAmount) {
-      return shim.error('Insufficient balance');
+      return shim.error('잔액이 부족합니다.');
     }
 
     const randomValue = Math.floor(Math.random() * 100); 
     const result = randomValue % 2 === 0 ? '짝' : '홀';
+    const fee = betAmount / 10; 
+    
     if (result === choice) {
-      let fee = betAmount / 10; 
-      user.balance += betAmount - fee;
-      
+      user.balance += betAmount - fee; 
     } else {
-      user.balance -= betAmount;
+      user.balance -= betAmount; 
     }
 
+    let adminBytes = await stub.getState('admin');
+    if (!adminBytes || adminBytes.length === 0) {
+      return shim.error('관리자를 찾을 수 없습니다.');
+    }
+
+    let admin = JSON.parse(adminBytes.toString());
+    admin.balance += fee;
+
     await stub.putState(userId, Buffer.from(JSON.stringify(user)));
-    return Buffer.from(`게임완료 결과: ${result}`);
+    await stub.putState('admin', Buffer.from(JSON.stringify(admin)));
+
+    return Buffer.from(`게임 완료. 결과: ${result}`);
   }
 };
 

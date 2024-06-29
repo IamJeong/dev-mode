@@ -63,12 +63,21 @@ app.get('/mainpage', checkSession, (req, res) => {
 });
 
 
-// app.get('/recharge', checkSession, (req, res) => {
-//     res.sendFile(path.join(__dirname, '../client/recharge.html'));
-// });
-// app.get('/recharge.html', checkSession, (req, res) => {
-//     res.sendFile(path.join(__dirname, '../client/recharge.html'));
-// });
+app.get('/recharge', checkSession, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/recharge.html'));
+});
+app.get('/recharge.html', checkSession, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/recharge.html'));
+});
+
+app.post('/recharge', checkSession, async function(req, res) {
+    let { amount } = req.body;
+    let userId = req.session.user;
+    let args = [userId, amount];
+    sdk.send(false, 'userRechargePoints', args, res, (result) => {
+        res.json({ status: 'success', message: result });
+    });
+});
 
 app.post('/send', checkSession, async function(req, res) {
     let { receiverId, amount } = req.body;

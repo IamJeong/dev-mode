@@ -59,6 +59,15 @@ app.controller('AppCtrl', function($scope, appFactory) {
         });
     }
 
+    $scope.userRechargePoints = function() {
+        $("#success_recharge").hide();
+        appFactory.userRechargePoints($scope.recharge, function(data) {
+            $scope.recharge_status = data.message;
+            $("#success_recharge").show();
+            $scope.queryAB(); // 충전 후 잔액 조회
+        });
+    }
+
     $scope.logout = function() {
         appFactory.logout(function() {
             window.location.href = '/login.html';
@@ -122,6 +131,12 @@ app.factory('appFactory', function($http) {
 
     factory.rechargePoints = function(data, callback) {
         $http.post('/admin/recharge', data).then(function(response) {
+            callback(response.data);
+        });
+    }
+
+    factory.userRechargePoints = function(data, callback) {
+        $http.post('/recharge', data).then(function(response) {
             callback(response.data);
         });
     }
