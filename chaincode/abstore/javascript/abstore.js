@@ -183,7 +183,7 @@ const ABstore = class {
     let sender = JSON.parse(senderBytes.toString());
     let receiver = JSON.parse(receiverBytes.toString());
 
-    if (sender.balance <= amount) {
+    if (sender.balance < amount) {
       return shim.error('잔액이 부족합니다.');
     }
 
@@ -212,7 +212,7 @@ const ABstore = class {
 
     let user = JSON.parse(userBytes.toString());
 
-    if (user.balance <= betAmount) {
+    if (user.balance < betAmount) {
       return shim.error('잔액이 부족합니다.');
     }
 
